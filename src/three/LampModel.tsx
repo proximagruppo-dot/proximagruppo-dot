@@ -3,9 +3,10 @@ import { Html, useGLTF } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { COMPONENTS, smooth, track } from './story';
+import { asset } from '../lib/asset';
 import styles from './CalloutBox.module.css';
 
-const MODEL = '/models/proxima-cad.glb';
+const MODEL = asset('/models/proxima-cad.glb');
 interface Props { progressRef: React.RefObject<number>; chapter: number; component: number; }
 const TARGETS = ['led_board', 'led_packages', 'control_board', 'wireless_module', 'usb_c', 'board_connector'];
 

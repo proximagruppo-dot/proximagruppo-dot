@@ -1,3 +1,4 @@
+import { asset } from '../../lib/asset';
 import styles from './Features.module.css';
 
 const DETAILS = [
@@ -27,7 +28,7 @@ export function Features() {
       </div>
       <div className={styles.layout}>
         <figure className={styles.prototype}>
-          <img src="/photos/prototype-lit.webp" alt="The real PROXIMA prototype illuminated, with a translucent white diffuser and black control ring" width="1200" height="1600" loading="lazy" />
+          <img src={asset('/photos/prototype-lit.webp')} alt="The real PROXIMA prototype illuminated, with a translucent white diffuser and black control ring" width="1200" height="1600" loading="lazy" />
           <figcaption><span className={styles.dot} /> THE WORKING PROTOTYPE <span>01 — 2026</span></figcaption>
         </figure>
         <div className={styles.details}>

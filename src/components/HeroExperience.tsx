@@ -2,6 +2,7 @@ import { Component, Suspense, lazy, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useScrollProgress } from '../hooks/useScrollProgress';
 import { CHAPTERS, COMPONENTS, chapterAt, componentAt, smooth } from '../three/story';
+import { asset } from '../lib/asset';
 import { ConnectedDevices } from './ConnectedDevices';
 import styles from './HeroExperience.module.css';
 
@@ -14,7 +15,7 @@ class SceneBoundary extends Component<{ children: ReactNode; fallback: ReactNode
 }
 
 function ModelFallback({ loading = false }: { loading?: boolean }) {
-  return <div className={styles.fallback} role="status"><img src="/photos/lamp-1.jpg" alt="The physical PROXIMA lamp prototype" /><span>{loading ? 'Preparing your product tour…' : 'The PROXIMA prototype · Explore the story below'}</span></div>;
+  return <div className={styles.fallback} role="status"><img src={asset('/photos/lamp-1.jpg')} alt="The physical PROXIMA lamp prototype" /><span>{loading ? 'Preparing your product tour…' : 'The PROXIMA prototype · Explore the story below'}</span></div>;
 }
 
 export function HeroExperience() {

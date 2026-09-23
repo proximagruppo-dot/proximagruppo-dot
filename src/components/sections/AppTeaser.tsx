@@ -1,22 +1,23 @@
 import { useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
+import { asset } from '../../lib/asset';
 import styles from './AppTeaser.module.css';
 
 const SCREENS = [
   {
-    id: 'home', label: 'Home', number: '01', image: '/app/app-home.png',
+    id: 'home', label: 'Home', number: '01', image: asset('/app/app-home.png'),
     title: 'An evening at a glance.',
     body: 'A calm home for your lamp. See its current mode and light level, with the evening experience front and centre.',
     alt: 'PROXIMA app home screen showing automatic mode, warm white light and 25 percent brightness',
   },
   {
-    id: 'sleep', label: 'Sleep', number: '02', image: '/app/app-sleep.png',
+    id: 'sleep', label: 'Sleep', number: '02', image: asset('/app/app-sleep.png'),
     title: 'See the shape of your night.',
     body: 'Sleep stages and light intensity share one view, alongside a wake-up window you can make your own.',
     alt: 'PROXIMA sleep screen with sleep stage and lamp intensity charts and a wake-up window',
   },
   {
-    id: 'light', label: 'Light', number: '03', image: '/app/app-manual.png',
+    id: 'light', label: 'Light', number: '03', image: asset('/app/app-manual.png'),
     title: 'A little more. A little less.',
     body: 'Manual controls keep the essentials close. Turn the lamp on or off and adjust its brightness with a simple slider.',
     alt: 'PROXIMA manual light control screen showing an on and off switch and brightness slider',

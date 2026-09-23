@@ -1,3 +1,4 @@
+import { asset } from '../../lib/asset';
 import styles from './Specs.module.css';
 
 const PARTS = [
@@ -20,7 +21,7 @@ export function Specs() {
       </div>
       <div className={styles.layout}>
         <figure className={styles.figure}>
-          <img src="/photos/prototype-parts.webp" alt="The actual PROXIMA prototype separated into the dark housing, circular LED assembly and white diffuser" width="1440" height="1080" loading="lazy" />
+          <img src={asset('/photos/prototype-parts.webp')} alt="The actual PROXIMA prototype separated into the dark housing, circular LED assembly and white diffuser" width="1440" height="1080" loading="lazy" />
           <figcaption><span>PROTOTYPE STUDY</span><span>HOUSING / LIGHT / DIFFUSER</span></figcaption>
         </figure>
         <div className={styles.parts}>

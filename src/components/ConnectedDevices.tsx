@@ -1,3 +1,4 @@
+import { asset } from '../lib/asset';
 import styles from './ConnectedDevices.module.css';
 export function ConnectedDevices() {
   return (
@@ -14,7 +15,7 @@ export function ConnectedDevices() {
         <div className={styles.label}><span>01</span> Your rhythm <small>Samsung Galaxy Watch</small></div>
       </div>
       <div className={styles.phoneWrap}>
-        <div className={styles.phone}><img src="/app/app-home.png" alt="Actual PROXIMA app home screen" fetchPriority="high" /></div>
+        <div className={styles.phone}><img src={asset('/app/app-home.png')} alt="Actual PROXIMA app home screen" fetchPriority="high" /></div>
         <div className={styles.label}><span>03</span> Your control <small>The PROXIMA app</small></div>
       </div>
     </div>
