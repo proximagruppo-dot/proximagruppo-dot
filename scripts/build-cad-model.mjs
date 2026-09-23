@@ -71,7 +71,15 @@ const ledNormal=([x,y,z])=>[-x,z,y];
 // Native Y runs from the USB-C/button edge (-100) to the ESP32/board-connector edge (-137).
 // Mounted upright, the ESP32 + LED-ring connector sit low in the housing and USB-C/button sit
 // high (verified against Alberto's board photos) -- so native Y must be flipped, not mapped 1:1.
-const controlTransform=([x,y,z])=>[-(x-125)*S,(-60.5-y)*S,-(55.3+z)*S];
+// The board's footprint leaves only ~1.6mm clearance against the housing's curved inner wall at
+// its tightest corner (measured against the assembled shell/base radius) -- enough for mesh
+// simplification error to poke a corner through at some rotations. Shrink 8% around the board's
+// own center (X/Y only, thickness untouched) for a safe, visually-imperceptible margin everywhere.
+const CONTROL_SHRINK=0.92, CONTROL_CY=1.16;
+const controlTransform=([x,y,z])=>{
+ const wx=-(x-125)*S*CONTROL_SHRINK, wy=CONTROL_CY+((-60.5-y)*S-CONTROL_CY)*CONTROL_SHRINK, wz=-(55.3+z)*S;
+ return [wx,wy,wz];
+};
 const controlNormal=([x,y,z])=>[-x,-y,-z];
 function bounds(positions) {const min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity];for(let i=0;i<positions.length;i+=3)for(let j=0;j<3;j++){min[j]=Math.min(min[j],positions[i+j]);max[j]=Math.max(max[j],positions[i+j]);}return {min,max};}
 function center(b){return b.min.map((v,i)=>(v+b.max[i])/2);}
