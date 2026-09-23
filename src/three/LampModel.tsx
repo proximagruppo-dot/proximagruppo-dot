@@ -58,7 +58,10 @@ export function LampModel({ progressRef, chapter, component }: Props) {
     const lift = track(p, [[0, 0], [0.34, 0], [0.435, 1.9], [0.47, 1.9], [0.57, 8], [0.90, 8], [0.965, 0], [1, 0]]);
     if (parts.diffuser) { parts.diffuser.position.y = lift; parts.diffuser.visible = p < 0.56 || p > 0.92; }
     if (parts.base) parts.base.position.y = -1.55 * smooth(0.535, 0.625, p) * reassemble;
-    if (parts.shell) parts.shell.position.y = -0.72 * smooth(0.565, 0.65, p) * reassemble;
+    // The black outer band used to just sink a little, leaving its rim framing (and visually
+    // overlapping) the boards it's supposed to reveal. Lift it fully out of frame instead, in
+    // lockstep with the diffuser, so the electronics show against open space, not through a ring.
+    if (parts.shell) { parts.shell.position.y = lift; parts.shell.visible = p < 0.56 || p > 0.92; }
     const rotation = track(p, [[0, -0.28], [0.28, -0.06], [0.45, -0.06], [0.63, Math.PI - 0.25], [0.86, Math.PI + 0.16], [0.91, Math.PI + 0.16], [0.975, Math.PI * 2 - 0.28], [1, Math.PI * 2 - 0.28]]);
     if (root.current) root.current.rotation.y = rotation;
     const close = smooth(0.68, 0.77, p) * (1 - smooth(0.89, 0.97, p));
