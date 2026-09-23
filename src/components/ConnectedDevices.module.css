@@ -1,0 +1,30 @@
+.devices { position: absolute; inset: 0; pointer-events: none; opacity: var(--devices-opacity, 1); }
+.watchWrap, .phoneWrap { position: absolute; top: 50%; width: 175px; }
+.watchWrap { left: calc(50% - 370px); transform: translate(calc(var(--device-travel, 0) * -1px), -44%); }
+.phoneWrap { right: calc(50% - 370px); transform: translate(calc(var(--device-travel, 0) * 1px), -46%); }
+.phone { width: 166px; padding: 5px; border-radius: 28px; background: linear-gradient(130deg, #777, #202124 18%, #777 53%, #101112 75%); box-shadow: 16px 22px 48px #000a, inset 0 0 0 1px #9a9a9a70; transform: perspective(900px) rotateY(-13deg) rotateZ(7deg); }
+.phone img { display: block; width: 100%; border: 3px solid #08090b; border-radius: 23px; }
+.watch { position: relative; height: 272px; width: 164px; transform: rotate(-12deg); filter: drop-shadow(15px 20px 16px #0009); }
+.strapTop, .strapBottom { position: absolute; left: 44px; width: 78px; height: 92px; background: linear-gradient(90deg,#202224,#3e4141 13%,#343737 84%,#171919); border: 1px solid #515351; }
+.strapTop { top: 0; border-radius: 28px 28px 7px 7px; transform: perspective(130px) rotateX(14deg); }
+.strapBottom { bottom: 0; border-radius: 7px 7px 24px 24px; background: repeating-linear-gradient(0deg,transparent 0 16px,#161818 16px 20px,transparent 20px 28px) center 3px / 6px 100% no-repeat,linear-gradient(90deg,#202224,#3e4141 13%,#343737 84%,#171919); }
+.watchCase { position: absolute; top: 54px; left: 0; z-index: 2; width: 166px; height: 166px; padding: 7px; background: linear-gradient(140deg,#bebfba,#595c5c 15%,#171919 38%,#5f6262 70%,#242727); border: 1px solid #a5a7a170; border-radius: 50%; box-shadow: 3px 3px 0 #141515,0 2px 4px #000; }
+.watchFace { height: 100%; border-radius: 50%; background: radial-gradient(ellipse at 30% 10%,#202527,#050708 70%); border: 3px solid #060808; display: flex; align-items: center; flex-direction: column; position: relative; overflow: hidden; }
+.samsung { margin-top: 17px; font-size: 6px; letter-spacing: 1.3px; color: #a7acaa; }
+.moon { font-size: 27px; color: var(--accent); height: 32px; line-height: 32px; }
+.time { font-size: 31px; font-weight: 500; color: #f2eee7; line-height: 1.15; letter-spacing: -1px; }
+.night { font-size: 5px; letter-spacing: 1.5px; margin-top: 6px; color: #b5aaa0; }
+.watchArc { position: absolute; inset: 8px; border: 2px solid transparent; border-right-color: #e4b08180; border-bottom-color: #e4b08180; border-radius: 50%; transform: rotate(-45deg); }
+.watchDot { width: 3px; height: 3px; border-radius: 50%; background: var(--accent); margin-top: 9px; }
+.watchButton { position: absolute; top: 97px; right: -6px; height: 19px; width: 7px; background: #747974; border-radius: 2px; box-shadow: 0 49px 0 #515654; }
+.label { margin-top: 32px; text-align: center; color: #dbd7d2; font-size: 12px; letter-spacing: .01em; }
+.label > span { font-size: 9px; color: var(--accent); margin-right: 7px; }
+.label small { display: block; color: var(--body); font-size: 9px; margin-top: 7px; letter-spacing: .025em; }
+@media (min-width: 1600px) { .watchWrap { left: calc(50% - 410px); } .phoneWrap { right: calc(50% - 410px); } }
+@media (max-width: 800px) { .watchWrap { left: calc(50% - 265px); scale: .82; } .phoneWrap { right: calc(50% - 265px); scale: .82; } }
+@media (max-width: 560px) {
+  .watchWrap { left: calc(50% - 192px); scale: .53; transform-origin: 50% 50%; top: 55%; }
+  .phoneWrap { right: calc(50% - 192px); scale: .57; transform-origin: 50% 50%; top: 53%; }
+  .label { font-size: 16px; margin-top: 26px; }
+  .label small { font-size: 12px; }
+}

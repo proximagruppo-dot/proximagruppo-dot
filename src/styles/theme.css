@@ -1,0 +1,39 @@
+:root {
+  color-scheme: dark;
+  --black: #000000;
+  --page: #090909;
+  --page-app: #09090b;
+  --accent: #e4b081;
+  --accent-dim: #2e231a;
+  --accent-deep: #d7a375;
+  --accent-time: #eab586;
+  --tab-active: #fdc99b;
+  --heading: #f0ede8;
+  --white: #ffffff;
+  --body: #98918a;
+  --body-warm: #a69e95;
+  --footnote: #726b63;
+  --card: #111212;
+  --card-warm: #131211;
+  --border: #303030;
+  --divider: #2b2c2c;
+  --danger: #ff5457;
+  --font-display: 'Sora', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --page-margin: 24px;
+  --content-max: 1160px;
+}
+* { box-sizing: border-box; }
+html { margin: 0; background: var(--page); scroll-behavior: smooth; scroll-padding-top: 30px; }
+body { margin: 0; min-width: 320px; background: var(--page); color: var(--heading); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+#root { min-height: 100vh; }
+h1,h2,h3 { font-family: var(--font-display); font-weight: 500; color: var(--heading); margin: 0; letter-spacing: -.035em; }
+p { margin: 0; color: var(--body); line-height: 1.7; }
+a { color: inherit; }
+button { font-family: var(--font-body); cursor: pointer; }
+button,a { -webkit-tap-highlight-color: transparent; }
+button:focus-visible,a:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+button:disabled { cursor: default; }
+img { max-width: 100%; }
+::selection { background: var(--accent); color: #09090b; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *,*::before,*::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }

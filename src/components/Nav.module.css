@@ -1,0 +1,9 @@
+.nav { position: absolute; top: 0; left: 0; right: 0; height: 86px; padding: 0 clamp(24px,5vw,80px); z-index: 40; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #ffffff0e; }
+.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; font-family: var(--font-display); font-size: 13px; font-weight: 500; letter-spacing: .2em; color: #efece7; }
+.brand svg { flex: none; }
+.links { display: flex; gap: 34px; margin-left: 35px; }
+.links a { font-size: 10px; text-decoration: none; color: #a8a29b; transition: color .2s; }
+.links a:hover { color: var(--accent); }
+.cta { display: flex; align-items: center; gap: 24px; padding: 11px 15px; border: 1px solid #e4b08146; border-radius: 2px; font-size: 10px; text-decoration: none; color: #e6c3a3; transition: background .2s; }
+.cta:hover { background: #e4b08112; }
+@media (max-width: 700px) { .nav { height: 77px; } .links { display: none; } .brand { font-size: 11px; gap: 8px; } .brand svg { width: 22px; height: 22px; } .cta { font-size: 9px; gap: 16px; padding: 10px 12px; } }
