@@ -24,6 +24,8 @@
 .prototype img { display: block; width: 100%; height: 590px; object-fit: cover; object-position: center 49%; }
 .prototype figcaption { position: absolute; inset: auto 0 0; display: flex; align-items: center; gap: 8px; padding: 62px 22px 20px; background: linear-gradient(transparent, rgba(0,0,0,.78)); font-size: 8px; font-weight: 500; letter-spacing: .12em; color: #eee8e0; }
 .prototype figcaption > span:last-child { margin-left: auto; opacity: .7; white-space: nowrap; }
+.insetDetail { position: absolute; top: 20px; right: 20px; width: 92px; height: 92px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(245,243,241,.18); box-shadow: 0 14px 34px rgba(0,0,0,.5); }
+.insetDetail img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .dot { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
 .intro { font-family: var(--font-display); color: var(--heading); font-size: clamp(21px, 2.2vw, 28px); line-height: 1.5; letter-spacing: -.04em; margin-bottom: 30px; }
 .detail { display: grid; grid-template-columns: 26px 1fr; gap: 15px; border-top: 1px solid var(--divider); padding: 26px 0; }

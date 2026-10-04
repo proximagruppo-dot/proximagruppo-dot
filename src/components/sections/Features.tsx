@@ -5,7 +5,7 @@ const DETAILS = [
   {
     number: '01',
     title: 'A softer presence.',
-    body: 'A translucent white diffuser gives the light its shape. A dark ring gives the object its unmistakable silhouette.',
+    body: 'A translucent white diffuser gives the light its shape. A dark ring holds the electronics that drive it.',
   },
   {
     number: '02',
@@ -28,7 +28,10 @@ export function Features() {
       </div>
       <div className={styles.layout}>
         <figure className={styles.prototype}>
-          <img src={asset('/photos/prototype-lit.webp')} alt="The real PROXIMA prototype illuminated, with a translucent white diffuser and black control ring" width="1200" height="1600" loading="lazy" />
+          <img src={asset('/photos/proxima-hero.webp')} alt="The illuminated PROXIMA prototype and its mirrored reflection, photographed from above" width="1200" height="1800" loading="lazy" />
+          <div className={styles.insetDetail}>
+            <img src={asset('/photos/proxima-hero-detail.webp')} alt="Macro detail of the diffuser lit from within" width="480" height="320" loading="lazy" />
+          </div>
           <figcaption><span className={styles.dot} /> THE WORKING PROTOTYPE <span>01 — 2026</span></figcaption>
         </figure>
         <div className={styles.details}>

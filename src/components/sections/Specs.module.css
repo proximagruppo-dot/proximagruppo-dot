@@ -16,6 +16,10 @@
 .row dt { color: var(--heading); }
 .row dd { margin: 0; color: var(--body-warm); }
 .note { font-size: 10px; line-height: 1.7; color: var(--body); margin-top: 22px; }
+.tuning { margin-top: 28px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; max-width: 320px; }
+.tuning figure { margin: 0; position: relative; border-radius: 4px; overflow: hidden; background: var(--card); }
+.tuning img { display: block; width: 100%; height: auto; aspect-ratio: 2 / 3; object-fit: cover; }
+.tuning figcaption { position: absolute; left: 10px; bottom: 10px; font-size: 9px; letter-spacing: .06em; color: #f5f3f1; background: rgba(9,9,11,.55); padding: 4px 8px; border-radius: 20px; }
 
 @media (max-width: 900px) { .header, .layout { gap: 36px; } .row { gap: 14px; } }
 @media (max-width: 680px) {

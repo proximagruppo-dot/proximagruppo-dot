@@ -9,8 +9,10 @@
 .number { display: block; color: var(--accent); letter-spacing: .12em; font: 7px var(--font-body); margin-bottom: 10px; }
 .box strong { display: block; color: #eae5df; font-size: 11px; font-weight: 500; margin-bottom: 7px; }
 .box p { color: #a29a91; font-size: 10px; line-height: 1.8; }
-.hotspot { position: relative; width: 29px; height: 29px; border: 1px solid #e4b081; border-radius: 50%; background: #100e0bce; color: #f3c59f; display: grid; place-items: center; font-size: 9px; box-shadow: 0 0 0 6px #e4b08115; }
-.hotspotTitle { position: absolute; top: 36px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 8px; letter-spacing: .04em; padding: 5px 8px; background: #0b0a09e8; border-radius: 2px; }
+/* Matches the component-panel's new tabular-numeral index chip + pill label so the on-model
+   hotspot and the scrubber below read as one system (same accent ring, tabular digits, pill). */
+.hotspot { position: relative; width: 29px; height: 29px; border: 1px solid #e4b081; border-radius: 50%; background: #100e0bce; color: #f3c59f; display: grid; place-items: center; font-size: 9px; font-variant-numeric: tabular-nums; letter-spacing: .02em; box-shadow: 0 0 0 6px #e4b08115; }
+.hotspotTitle { position: absolute; top: 37px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 8px; letter-spacing: .08em; text-transform: uppercase; color: #d8d1c8; padding: 5px 9px; background: #141210ee; border: 1px solid #ffffff1f; border-radius: 3px; }
 @keyframes appear { from { opacity: 0; } to { opacity: 1; } }
 @media (max-width: 1000px) { .box { width: 170px; padding: 13px; } .line { width: 25px; } .callout[data-side='right'] .box { left: 29px; } .callout[data-side='left'] .box { right: 29px; } }
 @media (max-width: 700px) { .box,.line { display: none; } .hotspot { width: 23px; height: 23px; font-size: 8px; } .hotspotTitle { font-size: 7px; top: 29px; } }

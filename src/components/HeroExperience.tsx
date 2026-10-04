@@ -1,7 +1,7 @@
-import { Component, Suspense, lazy, useRef, useState } from 'react';
+import { Component, Suspense, lazy, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useScrollProgress } from '../hooks/useScrollProgress';
-import { CHAPTERS, COMPONENTS, chapterAt, componentAt, smooth } from '../three/story';
+import { CHAPTERS, COMPONENTS, REASSEMBLY_START, chapterAt, componentAt, smooth } from '../three/story';
 import { asset } from '../lib/asset';
 import { ConnectedDevices } from './ConnectedDevices';
 import styles from './HeroExperience.module.css';
@@ -15,17 +15,39 @@ class SceneBoundary extends Component<{ children: ReactNode; fallback: ReactNode
 }
 
 function ModelFallback({ loading = false }: { loading?: boolean }) {
-  return <div className={styles.fallback} role="status"><img src={asset('/photos/lamp-1.jpg')} alt="The physical PROXIMA lamp prototype" /><span>{loading ? 'Preparing your product tour…' : 'The PROXIMA prototype · Explore the story below'}</span></div>;
+  return <div className={styles.fallback} role="status"><img src={asset('/photos/proxima-lamp-fallback.webp')} alt="The physical PROXIMA lamp prototype, lit, photographed from above" /><span>{loading ? 'Preparing your product tour…' : 'The PROXIMA prototype · Explore the story below'}</span></div>;
 }
 
 export function HeroExperience() {
   const stageRef = useRef<HTMLElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
-  const [view, setView] = useState({ chapter: 0, component: 0 });
+  // `reassembling` tracks whether progress has crossed REASSEMBLY_START, the point where
+  // LampModel.tsx's `lift` track starts closing the housing back over the exploded boards.
+  // componentAt() has no upper bound (it keeps reporting the last PCB component forever past
+  // its threshold), so without this the component panel kept naming a specific disassembled
+  // part (e.g. "Board connection") for the whole REASSEMBLY_START->CHAPTERS[4] window, while
+  // the model was already visibly reassembling/reassembled underneath it -- a direct
+  // contradiction between the panel's text and the model's state.
+  const [view, setView] = useState({ chapter: 0, component: 0, reassembling: false });
+  // ?present=1 strips every text overlay (heading, callout cards, nav) for clean screenshots --
+  // e.g. for slide decks -- leaving just the 3D render and device illustrations.
+  const present = typeof window !== 'undefined' && new URLSearchParams(location.search).has('present');
+  // The page paints an opaque dark background by default; strip it so a screenshot taken with
+  // Playwright's omitBackground can produce a truly transparent PNG (for product cutouts).
+  useEffect(() => {
+    if (!present) return;
+    const { documentElement, body } = document;
+    const prevHtml = documentElement.style.background;
+    const prevBody = body.style.background;
+    documentElement.style.background = 'transparent';
+    body.style.background = 'transparent';
+    return () => { documentElement.style.background = prevHtml; body.style.background = prevBody; };
+  }, [present]);
   const { progressRef, reducedMotion, scrollToProgress } = useScrollProgress(stageRef, (progress) => {
     const chapter = chapterAt(progress);
     const component = componentAt(progress);
-    setView((previous) => previous.chapter === chapter && previous.component === component ? previous : { chapter, component });
+    const reassembling = progress > REASSEMBLY_START;
+    setView((previous) => previous.chapter === chapter && previous.component === component && previous.reassembling === reassembling ? previous : { chapter, component, reassembling });
     const element = stickyRef.current;
     if (element) {
       element.style.setProperty('--devices-opacity', String(1 - smooth(0.055, 0.16, progress)));
@@ -37,40 +59,43 @@ export function HeroExperience() {
   const chapter = CHAPTERS[view.chapter];
   const component = COMPONENTS[view.component];
   return (
-    <section id="experience" ref={stageRef} className={styles.stage} data-experience data-chapter={view.chapter} aria-label="Explore the PROXIMA lamp in five chapters">
+    <section id="experience" ref={stageRef} className={styles.stage} style={present ? { background: 'transparent' } : undefined} data-experience data-chapter={view.chapter} aria-label="Explore the PROXIMA lamp in five chapters">
       <div ref={stickyRef} className={styles.sticky} data-chapter={view.chapter}>
-        <div className={styles.ambient} aria-hidden="true" />
-        <div className={styles.heading} key={view.chapter}>
+        {!present && <div className={styles.ambient} aria-hidden="true" />}
+        {!present && <div className={styles.heading} key={view.chapter}>
           <p className={styles.eyebrow}><span />{chapter.eyebrow}</p>
           <h1>{chapter.title}</h1>
           <p className={styles.description}>{chapter.body}</p>
-        </div>
+        </div>}
         <div className={styles.visual}>
           <SceneBoundary fallback={<ModelFallback />}>
             <Suspense fallback={<ModelFallback loading />}>
-              <Scene progressRef={progressRef} chapter={view.chapter} component={view.component} />
+              <Scene progressRef={progressRef} chapter={view.chapter} component={view.component} present={present} reassembling={view.reassembling} />
             </Suspense>
           </SceneBoundary>
-          <ConnectedDevices />
-          <div className={styles.lampLabel} aria-hidden={view.chapter !== 0}><span>02</span> Your light <small>PROXIMA</small></div>
+          <ConnectedDevices present={present} />
+          {!present && <div className={styles.lampLabel} aria-hidden={view.chapter !== 0}><span>02</span> Your light <small>PROXIMA</small></div>}
         </div>
-        {view.chapter === 1 && <div className={styles.mobileNote}><span>01 / DIFFUSER</span> Soft white light. <span>02 / HOUSING</span> A dark ring for the electronics.</div>}
-        {view.chapter === 2 && <div className={styles.modularNote}><span className={styles.noteMark}>↗</span><div><strong>Separate by design.</strong><p>The white diffuser slides up and out. The black ring stays behind.</p></div></div>}
-        {view.chapter === 3 && <aside className={styles.componentPanel} aria-label="PCB component explorer">
-          <div className={styles.componentCount}><span>INSIDE PROXIMA</span><span>0{view.component + 1} / 06</span></div>
-          <div className={styles.componentCopy} key={component.id}><p className={styles.partName}>{component.label}</p><h3>{component.title}</h3><p>{component.body}</p></div>
-          <div className={styles.componentButtons} aria-label="Choose a PCB component">
-            {COMPONENTS.map((part, index) => <button key={part.id} type="button" aria-label={`Inspect ${part.label}`} aria-pressed={view.component === index} onClick={() => scrollToProgress(part.at)}>{String(index + 1).padStart(2, '0')}</button>)}
+        {!present && view.chapter === 1 && <div className={styles.mobileNote}><span>01 / DIFFUSER</span> Soft white light. <span>02 / HOUSING</span> A dark ring for the electronics.</div>}
+        {!present && view.chapter === 2 && <div className={styles.modularNote}><span className={styles.noteMark}>↗</span><div><strong>Separate by design.</strong><p>The white diffuser slides up and out. The black ring stays behind.</p></div></div>}
+        {!present && view.chapter === 3 && !view.reassembling && <aside className={styles.componentPanel} aria-label="PCB component explorer">
+          <div className={styles.componentTrack} role="group" aria-label="Choose a PCB component">
+            {COMPONENTS.map((part, index) => <button key={part.id} type="button" className={styles.componentSegment} data-state={index < view.component ? 'done' : index === view.component ? 'active' : 'upcoming'} aria-label={`Inspect ${part.label}`} aria-pressed={view.component === index} onClick={() => scrollToProgress(part.at)}><span className={styles.segmentFill} /><span className={styles.segmentLabel} aria-hidden="true">{part.label}</span></button>)}
+          </div>
+          <div className={styles.componentCopy} key={component.id}>
+            <p className={styles.partName}><span className={styles.partIndex}>{String(view.component + 1).padStart(2, '0')}</span>{component.label}</p>
+            <h3>{component.title}</h3>
+            <p>{component.body}</p>
           </div>
         </aside>}
-        {view.chapter === 4 && <div className={styles.complete}><span className={styles.completeDot} /> One connected experience.<a href="#features">Meet the physical prototype <span>↘</span></a></div>}
-        <div className={styles.bottom}>
+        {!present && view.chapter === 4 && <div className={styles.complete}><span className={styles.completeDot} /> One connected experience.<a href="#features">Meet the physical prototype <span>↘</span></a></div>}
+        {!present && <div className={styles.bottom}>
           <div className={styles.meta}><span>DESIGNED FROM THE INSIDE OUT</span><span>{reducedMotion ? 'REDUCED MOTION' : 'SCROLL TO EXPLORE'} <span aria-hidden="true">↓</span></span></div>
           <nav className={styles.chapters} aria-label="Product story chapters">
             {CHAPTERS.map((item, index) => <button key={item.label} type="button" data-chapter-target={index} aria-current={view.chapter === index ? 'step' : undefined} onClick={() => scrollToProgress(item.at)}><span className={styles.chapterNumber}>0{index + 1}</span><span>{item.label}</span><span className={styles.chapterDot} /></button>)}
           </nav>
           <div className={styles.progress} aria-hidden="true"><span /></div>
-        </div>
+        </div>}
       </div>
     </section>
   );

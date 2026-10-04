@@ -2,7 +2,7 @@ import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { LampModel } from './LampModel';
 
-interface Props { progressRef: React.RefObject<number>; chapter: number; component: number; }
+interface Props { progressRef: React.RefObject<number>; chapter: number; component: number; present?: boolean; reassembling?: boolean; }
 export function Scene(props: Props) {
   const container = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);

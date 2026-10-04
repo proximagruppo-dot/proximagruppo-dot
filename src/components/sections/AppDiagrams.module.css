@@ -1,0 +1,101 @@
+/* Shared properties animated across these diagrams need to be registered so browsers
+   interpolate them smoothly (plain custom properties only ever snap between keyframes). */
+@property --ring-fill {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 62;
+}
+
+/* ---------- Beat 1 — Pairing ---------- */
+.pairing { display: flex; flex-direction: column; align-items: center; padding: 30px 16px 26px; }
+.pairingStage { display: flex; align-items: center; justify-content: center; gap: 16px; }
+
+.pairPhone { position: relative; width: 50px; height: 98px; border-radius: 14px; background: linear-gradient(160deg, #1d1d1c, #0a0a09); border: 1px solid #3a3a38; }
+.pairPhone::before { content: ''; position: absolute; inset: 5px; border-radius: 9px; background: #121110; }
+.pairPhoneNotch { position: absolute; top: 7px; left: 50%; transform: translateX(-50%); width: 15px; height: 3px; border-radius: 2px; background: #000; }
+
+.pairLink { position: relative; width: 86px; height: 2px; background: repeating-linear-gradient(90deg, var(--divider) 0 6px, transparent 6px 12px); }
+.pairPulse { position: absolute; top: 50%; left: 0; width: 5px; height: 5px; margin-top: -2.5px; border-radius: 50%; background: var(--accent); opacity: 0; box-shadow: 0 0 6px 1px #e4b08199; animation: pulseTravel 6s ease-in-out infinite; }
+.pairPulse:nth-child(2) { animation-delay: .3s; }
+.pairPulse:nth-child(3) { animation-delay: .6s; }
+@keyframes pulseTravel {
+  0% { left: 0; opacity: 0; }
+  6% { opacity: 1; }
+  32% { opacity: 1; left: 92%; }
+  38% { opacity: 0; left: 92%; }
+  100% { opacity: 0; left: 92%; }
+}
+
+.pairLamp { position: relative; width: 60px; height: 54px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+.pairLampGlow { position: absolute; top: -8px; width: 72px; height: 72px; border-radius: 50%; background: radial-gradient(circle, #e4b08140, transparent 70%); opacity: .4; animation: lampGlowSteady 6s ease-in-out infinite; }
+@keyframes lampGlowSteady {
+  0%, 38% { opacity: .4; }
+  48%, 96% { opacity: .9; }
+  100% { opacity: .4; }
+}
+.pairLampFlash { position: absolute; top: -12px; width: 80px; height: 80px; border-radius: 50%; background: var(--accent); opacity: 0; animation: lampFlash 6s ease-in-out infinite; }
+@keyframes lampFlash {
+  0%, 37% { opacity: 0; }
+  40% { opacity: .65; }
+  44% { opacity: 0; }
+  100% { opacity: 0; }
+}
+.pairLampDome { position: relative; width: 46px; height: 25px; border-radius: 50% 50% 5px 5px; background: linear-gradient(180deg, #f1ebe1, #c9bead); }
+.pairLampRing { width: 52px; height: 9px; border-radius: 3px; background: #1a1917; margin-top: -2px; }
+
+.pairStatusWrap { position: relative; height: 16px; margin-top: 20px; font-size: 11px; letter-spacing: .03em; color: var(--body-warm); }
+.pairStatusWrap span { position: absolute; left: 50%; top: 0; transform: translateX(-50%); white-space: nowrap; opacity: 0; }
+.pairStatusConnecting { animation: pairStatusConnecting 6s ease-in-out infinite; }
+.pairStatusPaired { color: var(--accent); animation: pairStatusPaired 6s ease-in-out infinite; }
+@keyframes pairStatusConnecting {
+  0% { opacity: 0; }
+  4% { opacity: 1; }
+  34% { opacity: 1; }
+  39% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes pairStatusPaired {
+  0%, 42% { opacity: 0; }
+  47% { opacity: 1; }
+  96% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ---------- Beat 2 — The watch ---------- */
+.watchFlow { display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 28px 12px 18px; }
+.watchGlyph { position: relative; width: 56px; height: 56px; border-radius: 50%; background: radial-gradient(ellipse at 30% 20%, #23282a, #07090a 70%); border: 3px solid #050607; box-shadow: 0 0 0 1px #4d504f55; display: flex; align-items: center; justify-content: center; }
+.watchGlyph::before, .watchGlyph::after { content: ''; position: absolute; left: 50%; width: 15px; height: 9px; transform: translateX(-50%); background: #2c2e2d; border: 1px solid #4a4c4a; }
+.watchGlyph::before { top: -8px; border-radius: 6px 6px 0 0; }
+.watchGlyph::after { bottom: -8px; border-radius: 0 0 6px 6px; }
+.watchSweep { position: absolute; inset: -5px; border-radius: 50%; border: 1px solid transparent; border-top-color: #e4b08188; border-right-color: #e4b08133; animation: watchSpin 3.4s linear infinite; }
+@keyframes watchSpin { to { transform: rotate(360deg); } }
+.watchMoon { font-size: 15px; color: var(--accent); }
+
+/* ---------- Beat 3 — The decision loop ---------- */
+.decision { display: flex; flex-direction: column; align-items: center; gap: 26px; padding: 8px 12px 4px; }
+.decisionRing { position: relative; width: 148px; height: 148px; border-radius: 50%; background: conic-gradient(var(--accent) calc(var(--ring-fill) * 1%), #2b2c2c99 0); animation: ringFill 4s linear infinite; }
+.decisionRing::before { content: ''; position: absolute; inset: 9px; border-radius: 50%; background: var(--card); }
+@keyframes ringFill { 0% { --ring-fill: 0; } 100% { --ring-fill: 100; } }
+
+.decisionOutput { display: flex; align-items: center; gap: 10px; font-size: 11px; letter-spacing: .04em; }
+.decisionLamp { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px 2px #e4b08199; animation: lampState 8s linear infinite; }
+@keyframes lampState {
+  0%, 44.5% { background: var(--accent); box-shadow: 0 0 10px 2px #e4b08199; }
+  45%, 99% { background: #3a3a3a; box-shadow: none; }
+  99.5%, 100% { background: var(--accent); box-shadow: 0 0 10px 2px #e4b08199; }
+}
+
+@media (max-width: 420px) {
+  .decisionRing { width: 126px; height: 126px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pairPulse, .pairLampGlow, .pairLampFlash, .pairStatusConnecting, .pairStatusPaired,
+  .watchSweep, .decisionRing, .decisionLamp {
+    animation: none;
+  }
+  .pairLampGlow { opacity: .75; }
+  .pairStatusPaired { opacity: 1; }
+  .pairStatusConnecting { opacity: 0; }
+  .decisionRing { background: conic-gradient(var(--accent) 62%, #2b2c2c99 0); }
+}

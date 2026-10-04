@@ -16,8 +16,15 @@ export function useScrollProgress(stageRef: React.RefObject<HTMLElement | null>,
   }, []);
   useEffect(() => {
     let frame = 0;
+    let resizeTimer = 0;
     let target = 0;
     let previousTime = 0;
+    // Mobile browsers resize `window.innerHeight` live as their address bar hides/shows while
+    // you scroll (even though the CSS `100svh` sticky container never visually changes size).
+    // Reading window.innerHeight on every scroll tick made the progress denominator wobble with
+    // zero extra physical scroll -- the exact cause of the "jumps on every scroll" mobile bug.
+    // Cache it and only refresh on a settled (debounced) resize, i.e. a real layout change.
+    let viewportHeight = window.innerHeight;
     const update = (time: number) => {
       const dt = Math.min((time - (previousTime || time - 16)) / 1000, 0.05);
       previousTime = time;
@@ -31,19 +38,24 @@ export function useScrollProgress(stageRef: React.RefObject<HTMLElement | null>,
       const element = stageRef.current;
       if (!element) return;
       const rect = element.getBoundingClientRect();
-      target = clamp(-rect.top / Math.max(1, element.offsetHeight - window.innerHeight));
+      target = clamp(-rect.top / Math.max(1, element.offsetHeight - viewportHeight));
       if (!frame) { previousTime = 0; frame = requestAnimationFrame(update); }
+    };
+    const onResize = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => { viewportHeight = window.innerHeight; read(); }, 180);
     };
     read();
     window.addEventListener('scroll', read, { passive: true });
-    window.addEventListener('resize', read);
-    const observer = new ResizeObserver(read);
+    window.addEventListener('resize', onResize);
+    const observer = new ResizeObserver(onResize);
     if (stageRef.current) observer.observe(stageRef.current);
     return () => {
       cancelAnimationFrame(frame);
+      window.clearTimeout(resizeTimer);
       observer.disconnect();
       window.removeEventListener('scroll', read);
-      window.removeEventListener('resize', read);
+      window.removeEventListener('resize', onResize);
     };
   }, [stageRef, reducedMotion]);
   const scrollToProgress = useCallback((progress: number) => {

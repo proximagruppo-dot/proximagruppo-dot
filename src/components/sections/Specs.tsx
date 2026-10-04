@@ -5,8 +5,8 @@ const PARTS = [
   { label: 'The diffuser', value: 'Translucent, removable upper body' },
   { label: 'The housing', value: 'Dark enclosure with a removable lower section' },
   { label: 'The light', value: 'Circular LED board' },
-  { label: 'The electronics', value: 'Dedicated control PCB inside the ring' },
-  { label: 'The interface', value: 'Home, sleep overview and manual light control' },
+  { label: 'The electronics', value: 'Dedicated control PCB inside the housing' },
+  { label: 'The interface', value: 'Home, sleep tracking and manual light control' },
 ];
 
 export function Specs() {
@@ -21,7 +21,7 @@ export function Specs() {
       </div>
       <div className={styles.layout}>
         <figure className={styles.figure}>
-          <img src={asset('/photos/prototype-parts.webp')} alt="The actual PROXIMA prototype separated into the dark housing, circular LED assembly and white diffuser" width="1440" height="1080" loading="lazy" />
+          <img src={asset('/photos/proxima-exploded.webp')} alt="The actual PROXIMA prototype separated into its dark housing rings, circular LED board and white diffuser, next to the assembled, lit lamp" width="1200" height="1800" loading="lazy" />
           <figcaption><span>PROTOTYPE STUDY</span><span>HOUSING / LIGHT / DIFFUSER</span></figcaption>
         </figure>
         <div className={styles.parts}>
@@ -30,6 +30,16 @@ export function Specs() {
             {PARTS.map((part) => <div key={part.label} className={styles.row}><dt>{part.label}</dt><dd>{part.value}</dd></div>)}
           </dl>
           <p className={styles.note}>Shown here: the current physical prototype and app interface.</p>
+          <div className={styles.tuning}>
+            <figure>
+              <img src={asset('/photos/proxima-warm.webp')} alt="The lamp glowing warm amber" width="700" height="1050" loading="lazy" />
+              <figcaption>Warm · 2700K</figcaption>
+            </figure>
+            <figure>
+              <img src={asset('/photos/proxima-cool.webp')} alt="The lamp glowing cool white" width="700" height="1050" loading="lazy" />
+              <figcaption>Cool · 6500K</figcaption>
+            </figure>
+          </div>
         </div>
       </div>
     </section>
