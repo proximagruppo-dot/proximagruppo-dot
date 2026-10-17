@@ -114,10 +114,25 @@ function ResizeHandle({ onResize }: { onResize: (deltaX: number) => void }) {
 }
 
 /** `resourceName` is normally taken from the `:resource` route segment; the
- *  prop is there so a page can embed a specific table directly. */
+ *  prop is there so a page can embed a specific table directly.
+ *
+ *  The `key` is the important part. Every resource renders through the same
+ *  `:resource` route element, so switching tables changes a param without
+ *  remounting -- which meant `useTable`'s `sorters.initial` never re-applied
+ *  and the previous table's sort carried over. Sorting `users` by `model`'s
+ *  `recorded_at` made PostgREST reject the query outright ("column
+ *  users.recorded_at does not exist"), and a resource whose sort happened to
+ *  be accepted rendered the OTHER table's rows against these columns, so every
+ *  cell showed "-". Keying on the resource forces a real remount, so all state
+ *  -- sorters, page, filters, selection -- starts clean by construction rather
+ *  than by a reset list someone has to remember to extend. */
 export function DataTable({ resourceName: resourceProp }: { resourceName?: string }) {
   const params = useParams<{ resource: string }>()
   const resourceName = resourceProp ?? params.resource ?? ''
+  return <DataTableView key={resourceName} resourceName={resourceName} />
+}
+
+function DataTableView({ resourceName }: { resourceName: string }) {
   const resource = getResource(resourceName)
 
   const [search, setSearch] = useState('')
@@ -146,18 +161,6 @@ export function DataTable({ resourceName: resourceProp }: { resourceName?: strin
   const { density, setDensity } = useTableDensity()
   const { columnWidths, setColumnWidth, resetColumnWidths } = useColumnWidths(tableKey)
   const { visibleColumns, toggleColumn, showAllColumns } = useVisibleColumns(tableKey, allColumnKeys, idField)
-
-  // Every piece of per-resource state resets when the route changes, or a
-  // filter from `users` would be re-applied against `lamp_log`'s columns.
-  useEffect(() => {
-    setSearch('')
-    setDebouncedSearch('')
-    setColumnFilters({})
-    setDateRange({ from: '', to: '' })
-    setAdvancedFilter(EMPTY_ADVANCED_FILTER)
-    setSelected(new Set())
-    setPageSize(PAGE_SIZES[0])
-  }, [resourceName])
 
   useEffect(() => {
     const id = window.setTimeout(() => setDebouncedSearch(search), SEARCH_DEBOUNCE_MS)
