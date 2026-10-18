@@ -1,4 +1,4 @@
-import { Lamp, ScrollText, UserRound, Waves, Radio, type LucideIcon } from 'lucide-react'
+import { Cpu, Lamp, ScrollText, UserRound, Waves, Radio, type LucideIcon } from 'lucide-react'
 
 export interface ResourceColumn {
   key: string
@@ -150,3 +150,18 @@ export const resources: ResourceConfig[] = [
 ]
 
 export const getResource = (name: string) => resources.find((r) => r.name === name)
+
+/** Sections that are not one table, so they get their own page component
+ *  instead of the generic DataTable. Listed in the sidebar after the resources;
+ *  each `name` is also its route segment (registered in AdminApp.tsx). */
+export interface CustomPageConfig {
+  name: string
+  label: string
+  icon: LucideIcon
+}
+
+export const customPages: CustomPageConfig[] = [
+  // Lamp firmware: the `firmware` Storage bucket, its beta/stable channels,
+  // the fleet (public.firmware_fleet) and install reports (public.firmware_install).
+  { name: 'firmware', label: 'Firmware', icon: Cpu },
+]

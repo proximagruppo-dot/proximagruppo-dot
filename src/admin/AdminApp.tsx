@@ -10,6 +10,7 @@ import { DataTable } from '@admin/components/data-table/data-table'
 import { resources } from '@admin/config/resources'
 import { supabaseClient } from '@admin/lib/supabase'
 import { ThemeContext, useThemeState } from '@admin/lib/use-theme'
+import { FirmwarePage } from '@admin/pages/firmware/firmware-page'
 import { LoginPage } from '@admin/pages/login-page'
 import { authProvider } from '@admin/providers/auth-provider'
 
@@ -65,6 +66,8 @@ export default function AdminApp() {
             }
           >
             <Route index element={<NavigateToResource resource={resources[0].name} />} />
+            {/* Static segments outrank `:resource`, so custom pages are matched first. */}
+            <Route path="firmware/:tab?" element={<FirmwarePage />} />
             <Route path=":resource">
               <Route index element={<DataTable />} />
               <Route path="show/:id" element={<DataShow />} />

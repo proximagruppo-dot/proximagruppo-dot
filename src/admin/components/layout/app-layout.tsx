@@ -3,7 +3,7 @@ import { LogOut, Moon, Sun } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
 
 import { Button } from '@admin/components/ui/button'
-import { resources } from '@admin/config/resources'
+import { customPages, resources } from '@admin/config/resources'
 import { useTheme } from '@admin/lib/use-theme'
 import { cn } from '@admin/lib/utils'
 
@@ -20,7 +20,7 @@ export function AppLayout() {
           <p className="text-xs text-muted-foreground">Backoffice</p>
         </div>
         <nav className="flex flex-1 flex-col gap-0.5 px-2">
-          {resources.map((resource) => (
+          {[...resources, ...customPages].map((resource) => (
             <NavLink
               key={resource.name}
               to={`/${resource.name}`}

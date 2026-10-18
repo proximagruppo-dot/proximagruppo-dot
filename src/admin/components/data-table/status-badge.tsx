@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 import { cn } from '@admin/lib/utils'
 
 /** Semantic colouring by pattern match rather than a per-table mapping, so a
@@ -58,6 +60,35 @@ export function LevelBadge({ level }: { level: string | null | undefined }) {
       )}
     >
       {entry.label}
+    </span>
+  )
+}
+
+export type BadgeTone = keyof typeof VARIANT_CLASSES
+
+/** A status pill with an explicit tone, for values whose meaning no pattern
+ *  match can infer (e.g. firmware "behind" / "rolled_back"). */
+export function ToneBadge({
+  tone,
+  title,
+  className,
+  children,
+}: {
+  tone: BadgeTone
+  title?: string
+  className?: string
+  children: ReactNode
+}) {
+  return (
+    <span
+      title={title}
+      className={cn(
+        'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap',
+        VARIANT_CLASSES[tone],
+        className
+      )}
+    >
+      {children}
     </span>
   )
 }
