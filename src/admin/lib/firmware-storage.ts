@@ -261,6 +261,38 @@ export async function precheckChannelMove(version: string): Promise<MovePrecheck
   return { bytes: got.bytes, manifest, imageSize, problems }
 }
 
+/**
+ * Tell open apps, right now, that a channel pointer moved.
+ *
+ * Supabase Realtime BROADCAST on the public topic `firmware-releases`, event
+ * `release`, payload { channel, version }. The phone app listens while its lamp is
+ * connected and re-reads the pointer the moment this arrives, so a release reaches
+ * an open app in about a second instead of on its next poll. The message carries no
+ * authority - a phone always reads the real pointer from Storage - so a lost or
+ * spoofed message costs at most one extra check. Best effort: never throws.
+ */
+export const RELEASE_TOPIC = 'firmware-releases'
+
+export async function announceRelease(channel: Channel, version: string): Promise<boolean> {
+  const ch = supabaseClient.channel(RELEASE_TOPIC)
+  try {
+    const joined = await new Promise<boolean>((resolve) => {
+      const t = setTimeout(() => resolve(false), 4000)
+      ch.subscribe((status) => {
+        if (status === 'SUBSCRIBED') { clearTimeout(t); resolve(true) }
+        else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') { clearTimeout(t); resolve(false) }
+      })
+    })
+    if (!joined) return false
+    const res = await ch.send({ type: 'broadcast', event: 'release', payload: { channel, version, at: Date.now() } })
+    return res === 'ok'
+  } catch {
+    return false
+  } finally {
+    supabaseClient.removeChannel(ch).catch(() => {})
+  }
+}
+
 /** Copies a version's manifest bytes over a channel pointer, then reads the
  *  pointer back through the public URL to prove phones now see it. */
 export async function moveChannel(
@@ -269,6 +301,8 @@ export async function moveChannel(
 ): Promise<UploadResult & { verified?: boolean; readBack?: string }> {
   const res = await uploadObject(pointerPath(channel), pre.bytes, 'application/json', POINTER_CACHE_CONTROL, true)
   if (!res.ok) return res
+  // Open apps check at once (see announceRelease); the read-back below does not wait on it.
+  void announceRelease(channel, pre.manifest.version)
   const back = await readPointer(channel)
   if (back.status === 'ok') {
     return { ok: true, verified: back.manifest.sha256 === pre.manifest.sha256, readBack: back.manifest.version }

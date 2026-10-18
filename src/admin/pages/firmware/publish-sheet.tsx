@@ -26,7 +26,7 @@ import {
   type ReleaseCheck,
   type ReleaseValidation,
 } from '@admin/lib/firmware'
-import {
+import { announceRelease,
   readPointer,
   uploadObject,
   versionFolderExists,
@@ -227,6 +227,8 @@ export function PublishSheet({
         setStep(step.id, { status: 'pass' })
       }
       if (channel !== 'none') {
+        // Open apps check at once (see announceRelease).
+        void announceRelease(channel, version)
         const back = await readPointer(channel)
         setReadBack(
           back.status === 'ok'
