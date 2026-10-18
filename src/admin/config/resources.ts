@@ -1,4 +1,4 @@
-import { Cpu, Lamp, ScrollText, UserRound, Waves, Radio, type LucideIcon } from 'lucide-react'
+import { Cpu, Lamp, ScrollText, Smartphone, UserRound, Waves, Radio, type LucideIcon } from 'lucide-react'
 
 export interface ResourceColumn {
   key: string
@@ -164,4 +164,7 @@ export const customPages: CustomPageConfig[] = [
   // Lamp firmware: the `firmware` Storage bucket, its beta/stable channels,
   // the fleet (public.firmware_fleet) and install reports (public.firmware_install).
   { name: 'firmware', label: 'Firmware', icon: Cpu },
+  // Phone and watch APKs for testers: the `apps` Storage bucket (latest.json
+  // pointers and immutable versionCode folders), see lib/app-releases.ts.
+  { name: 'app-releases', label: 'App releases', icon: Smartphone },
 ]

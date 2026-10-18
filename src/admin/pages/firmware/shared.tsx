@@ -43,22 +43,32 @@ export function CopyHash({ value, chars = 12 }: { value: string | null | undefin
   )
 }
 
-export function CheckIcon({ status }: { status: 'pass' | 'fail' | 'pending' | 'running' | 'skipped' }) {
+export function CheckIcon({ status }: { status: 'pass' | 'fail' | 'warn' | 'pending' | 'running' | 'skipped' }) {
+  if (status === 'warn') return <AlertTriangle className="size-4 shrink-0 text-amber-600 dark:text-amber-400" />
   if (status === 'pass') return <CheckCircle2 className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
   if (status === 'fail') return <XCircle className="size-4 shrink-0 text-destructive" />
   if (status === 'running') return <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground" />
   return <CircleDashed className="size-4 shrink-0 text-muted-foreground" />
 }
 
-/** A Storage/RLS error: the raw message verbatim, then what it means. */
-export function StorageErrorBox({ error, className }: { error: StorageErrorLike; className?: string }) {
+/** A Storage/RLS error: the raw message verbatim, then what it means. `explain`
+ *  defaults to the firmware bucket's wording; app releases pass their own. */
+export function StorageErrorBox({
+  error,
+  className,
+  explain = explainStorageError,
+}: {
+  error: StorageErrorLike
+  className?: string
+  explain?: (error: StorageErrorLike) => string
+}) {
   return (
     <div className={cn('rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm', className)}>
       <p className="font-mono text-xs break-words text-destructive">
         {error.message}
         {error.status ? ` (HTTP ${error.status}${error.statusCode && error.statusCode !== String(error.status) ? `, code ${error.statusCode}` : ''})` : error.statusCode ? ` (code ${error.statusCode})` : ''}
       </p>
-      <p className="mt-1.5 text-muted-foreground">{explainStorageError(error)}</p>
+      <p className="mt-1.5 text-muted-foreground">{explain(error)}</p>
     </div>
   )
 }

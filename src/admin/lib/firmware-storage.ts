@@ -32,7 +32,7 @@ export interface StorageErrorLike {
   statusCode?: string
 }
 
-const toErrorLike = (e: unknown): StorageErrorLike => {
+export const toErrorLike = (e: unknown): StorageErrorLike => {
   if (e && typeof e === 'object' && 'message' in e) {
     const o = e as { message: unknown; status?: unknown; statusCode?: unknown }
     return {
@@ -44,6 +44,13 @@ const toErrorLike = (e: unknown): StorageErrorLike => {
   return { message: String(e) }
 }
 
+/** Public URL of an object in any public bucket of this project (the firmware
+ *  bucket's is exactly lib/firmware.ts publicObjectUrl). */
+const bucketObjectUrl = (bucket: string, path: string) =>
+  bucket === FIRMWARE_BUCKET
+    ? publicObjectUrl(SUPABASE_URL, path)
+    : `${SUPABASE_URL.replace(/\/+$/, '')}/storage/v1/object/public/${bucket}/${path}`
+
 export type PublicFetch = { kind: 'ok'; bytes: ArrayBuffer; text: string } | { kind: 'missing' }
 
 /**
@@ -52,8 +59,8 @@ export type PublicFetch = { kind: 'ok'; bytes: ArrayBuffer; text: string } | { k
  * browser or CDN copy from before a move must never be shown as "current").
  * Supabase answers a missing public object with 400 or 404 and a not_found body.
  */
-export async function fetchPublic(path: string, bust: boolean): Promise<PublicFetch> {
-  const url = publicObjectUrl(SUPABASE_URL, path) + (bust ? `?cb=${Date.now()}` : '')
+export async function fetchPublic(path: string, bust: boolean, bucket: string = FIRMWARE_BUCKET): Promise<PublicFetch> {
+  const url = bucketObjectUrl(bucket, path) + (bust ? `?cb=${Date.now()}` : '')
   const res = await fetch(url, { cache: bust ? 'no-store' : 'default' })
   if (res.ok) {
     const bytes = await res.arrayBuffer()
@@ -65,8 +72,8 @@ export async function fetchPublic(path: string, bust: boolean): Promise<PublicFe
 }
 
 /** HEAD an object's public URL: its size when it is there, null when it is not. */
-async function headPublic(path: string): Promise<number | null> {
-  const res = await fetch(publicObjectUrl(SUPABASE_URL, path) + `?cb=${Date.now()}`, {
+export async function headPublic(path: string, bucket: string = FIRMWARE_BUCKET): Promise<number | null> {
+  const res = await fetch(bucketObjectUrl(bucket, path) + `?cb=${Date.now()}`, {
     method: 'HEAD',
     cache: 'no-store',
   })
@@ -214,11 +221,12 @@ export async function uploadObject(
   bytes: ArrayBuffer,
   contentType: string,
   cacheControl: string,
-  upsert: boolean
+  upsert: boolean,
+  bucket: string = FIRMWARE_BUCKET
 ): Promise<UploadResult> {
   try {
     const { error } = await supabaseClient.storage
-      .from(FIRMWARE_BUCKET)
+      .from(bucket)
       .upload(path, bytes, { contentType, cacheControl, upsert })
     if (error) return { ok: false, error: toErrorLike(error) }
     return { ok: true }
@@ -273,8 +281,15 @@ export async function precheckChannelMove(version: string): Promise<MovePrecheck
  */
 export const RELEASE_TOPIC = 'firmware-releases'
 
-export async function announceRelease(channel: Channel, version: string): Promise<boolean> {
-  const ch = supabaseClient.channel(RELEASE_TOPIC)
+export function announceRelease(channel: Channel, version: string): Promise<boolean> {
+  return broadcastOnce(RELEASE_TOPIC, 'release', { channel, version, at: Date.now() })
+}
+
+/** Joins a public Realtime topic, sends one broadcast and leaves. Best effort:
+ *  resolves false (never throws) when the topic cannot be joined or the send fails.
+ *  Shared by firmware-releases and app-releases (lib/app-release-storage.ts). */
+export async function broadcastOnce(topic: string, event: string, payload: Record<string, unknown>): Promise<boolean> {
+  const ch = supabaseClient.channel(topic)
   try {
     const joined = await new Promise<boolean>((resolve) => {
       const t = setTimeout(() => resolve(false), 4000)
@@ -284,7 +299,7 @@ export async function announceRelease(channel: Channel, version: string): Promis
       })
     })
     if (!joined) return false
-    const res = await ch.send({ type: 'broadcast', event: 'release', payload: { channel, version, at: Date.now() } })
+    const res = await ch.send({ type: 'broadcast', event, payload })
     return res === 'ok'
   } catch {
     return false
